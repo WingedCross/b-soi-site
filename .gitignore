@@ -1,0 +1,21 @@
+# Ce dépôt ne contient que le code du thème (theme/webradio-child) et
+# l'outillage (docker-compose, workflows). WordPress core, les uploads,
+# les autres plugins et la base de données restent propres à chaque
+# environnement et ne sont jamais versionnés.
+
+# Identifiants / secrets locaux
+.env
+*.local
+
+# Environnements de dev locaux
+.DS_Store
+Thumbs.db
+*.log
+
+# Dépendances (si vous ajoutez un jour un build JS/CSS)
+node_modules/
+vendor/
+
+# Fichiers d'IDE
+.vscode/
+.idea/

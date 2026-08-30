@@ -1,0 +1,21 @@
+/*
+Theme Name: WebRadio (enfant de Twenty Twenty-Five)
+Template: twentytwentyfive
+Theme URI: https://github.com/VOTRE-COMPTE/b-soi-site
+Author: Radio B-Soï
+Description: Thème enfant de Twenty Twenty-Five pour la webradio B-Soï : diffuseur en direct (RadioKing), agenda d'événements, charte graphique dédiée. Développé et versionné via GitHub.
+Version: 1.0.0
+Requires at least: 6.4
+Requires PHP: 7.4
+Text Domain: webradio-child
+License: GNU General Public License v2 or later
+License URI: LICENSE
+
+Ce fichier ne contient volontairement que l'en-tête requis par WordPress
+pour identifier le thème enfant et le rattacher au parent ("Template:
+twentytwentyfive"). Les styles réels sont dans assets/css/components.css,
+chargé par functions.php après le style du parent et le style.css du
+thème enfant — ceci pour laisser la priorité au système de couleurs
+(theme.json) sur les composants génériques, et ne surcharger que les
+éléments propres au site (lecteur radio, agenda, boutons).
+*/

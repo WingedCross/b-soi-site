@@ -1,0 +1,91 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/theme.json",
+	"version": 2,
+	"customTemplates": [
+		{
+			"name": "page-agenda",
+			"title": "Agenda événements",
+			"postTypes": [ "page" ]
+		}
+	],
+	"settings": {
+		"color": {
+			"palette": [
+				{ "slug": "noir-charbon", "name": "Noir charbon", "color": "#36454F" },
+				{ "slug": "orange-feu", "name": "Orange feu", "color": "#CC5500" },
+				{ "slug": "bleu-desature", "name": "Bleu désaturé", "color": "#A6DCED" },
+				{ "slug": "gris-moyen", "name": "Gris moyen", "color": "#7F7F7F" },
+				{ "slug": "blanc-casse", "name": "Blanc cassé", "color": "#FAFAFA" },
+				{ "slug": "beige-chaud", "name": "Beige chaud", "color": "#D9CBAA" },
+				{ "slug": "vert-mousse", "name": "Vert mousse", "color": "#6B8E23" }
+			],
+			"custom": true,
+			"customDuotone": true,
+			"customGradient": true,
+			"gradients": [
+				{
+					"slug": "charbon-orange",
+					"name": "Charbon vers orange feu",
+					"gradient": "linear-gradient(135deg, #36454F 0%, #CC5500 100%)"
+				},
+				{
+					"slug": "bleu-beige",
+					"name": "Bleu désaturé vers beige chaud",
+					"gradient": "linear-gradient(135deg, #A6DCED 0%, #D9CBAA 100%)"
+				}
+			]
+		},
+		"typography": {
+			"fontFamilies": [
+				{
+					"slug": "heading",
+					"name": "Titres",
+					"fontFamily": "\"Poppins\", \"Segoe UI\", sans-serif"
+				},
+				{
+					"slug": "body",
+					"name": "Texte courant",
+					"fontFamily": "\"Inter\", \"Segoe UI\", sans-serif"
+				}
+			],
+			"customFontSize": true
+		},
+		"spacing": {
+			"units": [ "px", "%", "em", "rem", "vh", "vw" ]
+		},
+		"layout": {
+			"contentSize": "760px",
+			"wideSize": "1160px"
+		}
+	},
+	"styles": {
+		"color": {
+			"background": "#FAFAFA",
+			"text": "#36454F"
+		},
+		"typography": {
+			"fontFamily": "var(--wp--preset--font-family--body)"
+		},
+		"elements": {
+			"link": {
+				"color": { "text": "#6B8E23" },
+				":hover": {
+					"color": { "text": "#CC5500" }
+				}
+			},
+			"heading": {
+				"typography": {
+					"fontFamily": "var(--wp--preset--font-family--heading)"
+				},
+				"color": { "text": "#36454F" }
+			},
+			"button": {
+				"color": {
+					"background": "#CC5500",
+					"text": "#FAFAFA"
+				},
+				"border": { "radius": "8px" }
+			}
+		}
+	}
+}

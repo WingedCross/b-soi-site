@@ -1,0 +1,54 @@
+# Environnement de développement local pour le thème WebRadio.
+# Versions alignées sur l'hébergement Gandi de production (PHP 8.4, MySQL 8.4).
+#
+# Démarrage :
+#   docker compose up -d
+#   -> site : http://localhost:8080
+#   -> phpMyAdmin : http://localhost:8081
+#
+# Le thème enfant (theme/webradio-child) est monté en direct : toute
+# modification faite avec Claude Code est immédiatement visible dans le
+# navigateur, sans rebuild.
+
+services:
+  wordpress:
+    image: wordpress:php8.4-apache
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: webradio
+      WORDPRESS_DB_USER: webradio
+      WORDPRESS_DB_PASSWORD: webradio_local_dev
+      WORDPRESS_DEBUG: 1
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./theme/webradio-child:/var/www/html/wp-content/themes/webradio-child
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: webradio
+      MYSQL_USER: webradio
+      MYSQL_PASSWORD: webradio_local_dev
+      MYSQL_ROOT_PASSWORD: root_local_dev
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: unless-stopped
+
+  phpmyadmin:
+    image: phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+    depends_on:
+      - db
+    restart: unless-stopped
+
+volumes:
+  wordpress_data:
+  db_data:
