@@ -23,13 +23,17 @@ function webradio_render_player_shortcode( $atts = array() ) {
 		'wr_radio_player'
 	);
 
+		// Les valeurs par défaut ci-dessous DOIVENT correspondre à celles
+	// déclarées dans inc/customizer.php : get_theme_mod() ne connaît pas
+	// automatiquement le "default" enregistré côté Customizer, il faut le
+	// repasser explicitement ici, sinon rien ne s'affiche tant que la
+	// section n'a jamais été ouverte/enregistrée dans l'admin.
 	$type         = get_theme_mod( 'webradio_player_type', 'iframe' );
-	$embed_url    = get_theme_mod( 'webradio_player_embed_url', '' );
-	$extra_script = get_theme_mod( 'webradio_player_extra_script', '' );
+	$embed_url    = get_theme_mod( 'webradio_player_embed_url', 'https://player.radioking.io/b-soi/?c=%23CC5500&c2=%23FAFAFA&f=v&i=1&p=1&s=0&alb=1&li=1&popup=1&plc=0&h=365&l=275&v=2' );
+	$extra_script = get_theme_mod( 'webradio_player_extra_script', 'https://player.radioking.io/scripts/iframe.bundle.js' );
 	$stream_url   = get_theme_mod( 'webradio_player_stream_url', '' );
 	$width        = absint( get_theme_mod( 'webradio_player_width', 275 ) );
 	$height       = absint( get_theme_mod( 'webradio_player_height', 365 ) );
-
 	ob_start();
 	?>
 	<div class="wr-radio-player">
