@@ -1,0 +1,52 @@
+name: Déploiement production (Gandi)
+
+# Se déclenche uniquement sur push vers "main" — c'est la seule branche
+# déployée automatiquement (voir docs/PLAN-DEV.md §5, convention de
+# branches). Peut aussi être lancé manuellement depuis l'onglet "Actions"
+# de GitHub (bouton "Run workflow"), utile pour un premier test.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code du dépôt
+        uses: actions/checkout@v4
+
+      - name: Reconstituer l'arborescence attendue par Gandi (htdocs/...)
+        # Gandi checkout le dépôt poussé directement à la racine de
+        # vhosts/b-soi.fr/, qui contient déjà htdocs/ (la vraie racine web).
+        # Le contenu poussé doit donc inclure "htdocs/" en tête de chemin —
+        # confirmé par test réel, voir docs/PLAN-DEV.md §6.1.
+        run: |
+          mkdir -p deploy/htdocs/wp-content/themes
+          cp -r theme/webradio-child deploy/htdocs/wp-content/themes/webradio-child
+
+      - name: Configurer l'accès SSH vers Gandi
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.GANDI_DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H git.sd3.gpaas.net >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Pousser vers Gandi et déclencher le déploiement
+        working-directory: deploy
+        env:
+          GANDI_REMOTE: git+ssh://80cc294c-01cb-11f1-b659-00163e816020@git.sd3.gpaas.net/b-soi.fr.git
+          GANDI_HOST: 80cc294c-01cb-11f1-b659-00163e816020@git.sd3.gpaas.net
+        run: |
+          git init -q
+          git checkout -q -b master
+          git -c user.email="deploy@b-soi.fr" -c user.name="Deploiement automatique" add .
+          git -c user.email="deploy@b-soi.fr" -c user.name="Deploiement automatique" commit -q -m "Deploiement automatique depuis GitHub Actions (${{ github.sha }})"
+          git remote add gandi "$GANDI_REMOTE"
+          # --force : ce dépôt est recréé à zéro à chaque exécution du
+          # workflow, son historique n'a donc jamais de lien avec celui déjà
+          # présent côté Gandi. C'est sans risque ici : "deploy" ne fait
+          # qu'un checkout des fichiers suivis, jamais un "clean" (voir
+          # docs/PLAN-DEV.md §6.1) — rien n'est jamais supprimé côté serveur.
+          git push --force gandi master
+          ssh -o StrictHostKeyChecking=accept-new "$GANDI_HOST" deploy b-soi.fr.git
