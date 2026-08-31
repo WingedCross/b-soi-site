@@ -63,18 +63,74 @@ function webradio_child_body_classes( $classes ) {
 add_filter( 'body_class', 'webradio_child_body_classes' );
 
 /**
- * Les templates HTML (front-page.html, page-agenda.html) utilisent le
- * shortcode [tribe_events] fourni par le plugin "The Events Calendar".
- * Tant que ce plugin n'est pas installé, WordPress affiche le texte brut
- * du shortcode aux visiteurs — on affiche un message d'aide à la place,
- * uniquement si le vrai shortcode n'est pas déjà enregistré.
+ * Affichage de l'agenda — shortcode maison [wr_agenda].
+ *
+ * Le plugin gratuit "The Events Calendar" NE fournit PAS le shortcode
+ * [tribe_events] : celui-ci est réservé à Events Calendar PRO (payant).
+ * La version gratuite crée en revanche un type de contenu "tribe_events"
+ * interrogeable normalement — on écrit donc notre propre shortcode qui va
+ * chercher les prochains événements directement via WP_Query, et les
+ * affiche avec notre propre balisage (facilement stylable avec la charte
+ * graphique du site, sans dépendre du plugin payant).
  */
-function webradio_child_agenda_fallback_shortcode() {
-	if ( ! shortcode_exists( 'tribe_events' ) ) {
-		add_shortcode( 'tribe_events', 'webradio_child_agenda_missing_plugin_notice' );
+function webradio_child_agenda_shortcode( $atts ) {
+	$atts = shortcode_atts(
+		array(
+			'events_per_page' => 3,
+		),
+		$atts,
+		'wr_agenda'
+	);
+
+	if ( ! post_type_exists( 'tribe_events' ) ) {
+		return webradio_child_agenda_missing_plugin_notice();
 	}
+
+	$query = new WP_Query(
+		array(
+			'post_type'      => 'tribe_events',
+			'posts_per_page' => (int) $atts['events_per_page'],
+			'meta_key'       => '_EventStartDate',
+			'orderby'        => 'meta_value',
+			'order'          => 'ASC',
+			'meta_query'     => array(
+				array(
+					'key'     => '_EventStartDate',
+					'value'   => current_time( 'Y-m-d H:i:s' ),
+					'compare' => '>=',
+					'type'    => 'DATETIME',
+				),
+			),
+		)
+	);
+
+	if ( ! $query->have_posts() ) {
+		return '<p class="wr-agenda-empty">' . esc_html__( 'Aucun événement à venir pour le moment.', 'webradio-child' ) . '</p>';
+	}
+
+	ob_start();
+	echo '<div class="wr-agenda-list">';
+	while ( $query->have_posts() ) {
+		$query->the_post();
+		$start_date   = get_post_meta( get_the_ID(), '_EventStartDate', true );
+		$date_display = $start_date ? date_i18n( 'j F Y — H:i', strtotime( $start_date ) ) : '';
+		?>
+		<div class="wr-agenda-list__item wr-card">
+			<?php if ( $date_display ) : ?>
+				<span class="wr-tag"><?php echo esc_html( $date_display ); ?></span>
+			<?php endif; ?>
+			<h3 class="wr-agenda-list__title">
+				<a href="<?php echo esc_url( get_permalink() ); ?>"><?php echo esc_html( get_the_title() ); ?></a>
+			</h3>
+		</div>
+		<?php
+	}
+	echo '</div>';
+	wp_reset_postdata();
+
+	return ob_get_clean();
 }
-add_action( 'init', 'webradio_child_agenda_fallback_shortcode', 20 );
+add_shortcode( 'wr_agenda', 'webradio_child_agenda_shortcode' );
 
 function webradio_child_agenda_missing_plugin_notice() {
 	ob_start();

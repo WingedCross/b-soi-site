@@ -9,7 +9,6 @@
 # Le thème enfant (theme/webradio-child) est monté en direct : toute
 # modification faite avec Claude Code est immédiatement visible dans le
 # navigateur, sans rebuild.
-
 services:
   wordpress:
     image: wordpress:php8.4-apache
@@ -21,13 +20,15 @@ services:
       WORDPRESS_DB_USER: webradio
       WORDPRESS_DB_PASSWORD: webradio_local_dev
       WORDPRESS_DEBUG: 1
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_DEBUG_DISPLAY', false);
+        define('WP_DEBUG_LOG', true);
     volumes:
       - wordpress_data:/var/www/html
       - ./theme/webradio-child:/var/www/html/wp-content/themes/webradio-child
     depends_on:
       - db
     restart: unless-stopped
-
   db:
     image: mysql:8.4
     environment:
@@ -38,7 +39,6 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     restart: unless-stopped
-
   phpmyadmin:
     image: phpmyadmin
     ports:
@@ -48,7 +48,6 @@ services:
     depends_on:
       - db
     restart: unless-stopped
-
 volumes:
   wordpress_data:
   db_data:
