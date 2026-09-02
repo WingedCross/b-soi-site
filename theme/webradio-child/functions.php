@@ -155,3 +155,73 @@ function webradio_child_agenda_missing_plugin_notice() {
 	<?php
 	return ob_get_clean();
 }
+
+/**
+ * Sécurité : masquer la version de WordPress.
+ *
+ * Retire le numéro de version du <head> et des URLs de fichiers CSS/JS
+ * (?ver=7.1), pour ne pas faciliter la recherche de failles connues
+ * correspondant à la version exacte du site.
+ */
+remove_action( 'wp_head', 'wp_generator' );
+add_filter( 'the_generator', '__return_empty_string' );
+
+function webradio_child_remove_version_query_arg( $src ) {
+	if ( strpos( $src, 'ver=' ) ) {
+		$src = remove_query_arg( 'ver', $src );
+	}
+	return $src;
+}
+add_filter( 'style_loader_src', 'webradio_child_remove_version_query_arg', 9999 );
+add_filter( 'script_loader_src', 'webradio_child_remove_version_query_arg', 9999 );
+
+/**
+ * Sécurité : désactiver XML-RPC.
+ *
+ * XML-RPC est un vecteur classique d'attaques brute-force amplifiées
+ * (méthode system.multicall) et de DDoS par pingback. Le filtre
+ * xmlrpc_enabled seul ne suffit pas à bloquer les requêtes réelles, on
+ * bloque donc directement l'accès au fichier xmlrpc.php. On évite
+ * wp_die() ici : dans le contexte XML-RPC, WordPress route wp_die()
+ * vers un handler qui dépend d'une classe pas encore chargée à ce
+ * stade (page blanche/erreur fatale) — on sort donc une réponse texte
+ * brute nous-mêmes.
+ */
+add_filter( 'xmlrpc_enabled', '__return_false' );
+remove_action( 'wp_head', 'rsd_link' );
+add_filter(
+	'wp_headers',
+	function ( $headers ) {
+		unset( $headers['X-Pingback'] );
+		return $headers;
+	}
+);
+
+add_action(
+	'init',
+	function () {
+		if ( false !== strpos( $_SERVER['REQUEST_URI'], 'xmlrpc.php' ) ) {
+			status_header( 403 );
+			header( 'Content-Type: text/plain; charset=utf-8' );
+			echo 'XML-RPC services are disabled on this site.';
+			exit;
+		}
+	}
+);
+
+/**
+ * Sécurité : bloquer l'énumération des utilisateurs via ?author=N.
+ *
+ * Empêche de deviner les identifiants des comptes admin en itérant
+ * sur des URLs du type b-soi.fr/?author=1, /?author=2, etc. Hook sur
+ * "init" plutôt que "template_redirect" pour s'exécuter avant que
+ * WordPress ne redirige lui-même vers l'URL propre de l'auteur.
+ */
+add_action(
+	'init',
+	function () {
+		if ( ! is_admin() && ! empty( $_GET['author'] ) ) {
+			wp_die( 'Accès non autorisé.', 'Erreur', array( 'response' => 403 ) );
+		}
+	}
+);
