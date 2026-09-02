@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Récupérer le code du dépôt
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Reconstituer l'arborescence attendue par Gandi (htdocs/...)
         # Gandi checkout le dépôt poussé directement à la racine de
         # vhosts/b-soi.fr/, qui contient déjà htdocs/ (la vraie racine web).
