@@ -248,3 +248,18 @@ add_filter(
 		return $result;
 	}
 );
+
+/**
+ * Sécurité : uniformiser les messages d'erreur de connexion.
+ *
+ * Par défaut, WordPress indique si c'est le nom d'utilisateur qui est
+ * inconnu OU le mot de passe qui est incorrect — ce qui confirme à un
+ * attaquant qu'un identifiant existe, facilitant les attaques ciblées.
+ * On remplace par un message neutre, identique dans tous les cas.
+ */
+add_filter(
+	'login_errors',
+	function () {
+		return __( 'Identifiants incorrects.', 'webradio-child' );
+	}
+);
