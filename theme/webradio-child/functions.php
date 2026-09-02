@@ -263,3 +263,19 @@ add_filter(
 		return __( 'Identifiants incorrects.', 'webradio-child' );
 	}
 );
+
+/**
+ * Sécurité : en-têtes HTTP.
+ *
+ * .htaccess n'étant pas versionné sur ce repo (géré directement sur
+ * Gandi, hors Git), on envoie ces en-têtes en PHP pour qu'ils restent
+ * sous contrôle de version avec le reste du code de sécurité.
+ */
+add_action(
+	'send_headers',
+	function () {
+		header( 'X-Content-Type-Options: nosniff' );
+		header( 'X-Frame-Options: SAMEORIGIN' );
+		header( 'Referrer-Policy: strict-origin-when-cross-origin' );
+	}
+);
