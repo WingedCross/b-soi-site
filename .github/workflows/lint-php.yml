@@ -1,0 +1,22 @@
+name: Lint PHP
+
+on:
+  pull_request:
+    paths:
+      - '**.php'
+
+jobs:
+  php-syntax-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+
+      - name: Vérifier la syntaxe de chaque fichier PHP
+        run: |
+          find . -name "*.php" -not -path "./wp-config.php" -print0 | xargs -0 -n1 php -l
