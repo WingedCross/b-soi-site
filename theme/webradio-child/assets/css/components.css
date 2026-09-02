@@ -96,8 +96,9 @@
 }
 
 .wr-radio-player__info{ flex: 1 1 200px; min-width: 200px; text-align: left; }
-.wr-radio-player__title{ margin: 0 0 4px; font-size: 1.1rem; }
-.wr-radio-player__subtitle{ margin: 0; color: var(--wr-bleu-desature); font-size: .9rem; }
+.wr-radio-player__title{ margin: 0; font-size: 1.1rem; line-height: 1; }
+.wr-radio-player__subtitle{ margin: 4px 0 0; color: var(--wr-bleu-desature); font-size: .9rem; }
+.wr-radio-player__info p:empty{ display: none; margin: 0; }
 
 .wr-radio-player__frame-wrap{
 	border-radius: 10px;
@@ -130,7 +131,8 @@
 	flex-direction: column;
 	gap: 14px;
 }
-.wr-agenda-list__item{ list-style: none !important; }
+.wr-agenda-list__item{
+	list-style: none !important;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
