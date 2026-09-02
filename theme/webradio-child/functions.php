@@ -225,3 +225,26 @@ add_action(
 		}
 	}
 );
+
+/**
+ * Sécurité : bloquer l'énumération des utilisateurs via l'API REST.
+ *
+ * L'endpoint /wp-json/wp/v2/users expose la liste des comptes (dont les
+ * identifiants admin) à n'importe quel visiteur non connecté — même
+ * vecteur d'attaque que ?author=N, mais par une porte différente. On ne
+ * bloque que pour les visiteurs non connectés, pour ne pas casser des
+ * fonctionnalités internes de l'éditeur (sélecteur d'auteur pour les
+ * comptes Editor/Administrator, qui restent connectés).
+ */
+add_filter(
+	'rest_authentication_errors',
+	function ( $result ) {
+		if ( ! empty( $result ) ) {
+			return $result;
+		}
+		if ( ! is_user_logged_in() && false !== strpos( $_SERVER['REQUEST_URI'], '/wp-json/wp/v2/users' ) ) {
+			return new WP_Error( 'rest_forbidden', __( 'Accès non autorisé.', 'webradio-child' ), array( 'status' => 403 ) );
+		}
+		return $result;
+	}
+);
