@@ -1,5 +1,4 @@
 name: Déploiement production (Gandi)
-
 # Se déclenche uniquement sur push vers "main" — c'est la seule branche
 # déployée automatiquement (voir docs/PLAN-DEV.md §5, convention de
 # branches). Peut aussi être lancé manuellement depuis l'onglet "Actions"
@@ -8,14 +7,12 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Récupérer le code du dépôt
         uses: actions/checkout@v4
-
       - name: Reconstituer l'arborescence attendue par Gandi (htdocs/...)
         # Gandi checkout le dépôt poussé directement à la racine de
         # vhosts/b-soi.fr/, qui contient déjà htdocs/ (la vraie racine web).
@@ -24,14 +21,12 @@ jobs:
         run: |
           mkdir -p deploy/htdocs/wp-content/themes
           cp -r theme/webradio-child deploy/htdocs/wp-content/themes/webradio-child
-
       - name: Configurer l'accès SSH vers Gandi
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.GANDI_DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H git.sd3.gpaas.net >> ~/.ssh/known_hosts 2>/dev/null
-
       - name: Pousser vers Gandi et déclencher le déploiement
         working-directory: deploy
         env:
@@ -50,3 +45,9 @@ jobs:
           # docs/PLAN-DEV.md §6.1) — rien n'est jamais supprimé côté serveur.
           git push --force gandi master
           ssh -o StrictHostKeyChecking=accept-new "$GANDI_HOST" deploy b-soi.fr.git
+      - name: Notifier Discord en cas d'échec
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" \
+            -d "{\"content\": \"🔴 **Échec du déploiement B-Soï** — commit \`${{ github.sha }}\` par ${{ github.actor }}. Voir les logs : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" \
+            "${{ secrets.DISCORD_WEBHOOK_URL }}"
