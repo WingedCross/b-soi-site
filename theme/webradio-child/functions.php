@@ -15,6 +15,12 @@ define( 'WEBRADIO_CHILD_VERSION', '1.0.0' );
  * Charge les styles : celui du thème parent (Twenty Twenty-Five), puis
  * le style.css du thème enfant (en-tête uniquement), puis nos styles de
  * composants propres au site (lecteur radio, agenda, boutons).
+ *
+ * La version de chaque fichier enfant est calculée à partir de sa date
+ * de dernière modification (filemtime), pas d'une constante figée — ça
+ * garantit que l'URL change automatiquement à chaque déploiement, pour
+ * que les navigateurs et le cache serveur ne servent jamais une
+ * ancienne version après une mise à jour.
  */
 function webradio_child_enqueue_styles() {
 	$parent_theme = wp_get_theme( get_template() );
@@ -26,18 +32,20 @@ function webradio_child_enqueue_styles() {
 		$parent_theme->get( 'Version' )
 	);
 
+	$child_style_path = get_stylesheet_directory() . '/style.css';
 	wp_enqueue_style(
 		'webradio-child-style',
 		get_stylesheet_uri(),
 		array( 'twentytwentyfive-style' ),
-		WEBRADIO_CHILD_VERSION
+		file_exists( $child_style_path ) ? filemtime( $child_style_path ) : WEBRADIO_CHILD_VERSION
 	);
 
+	$components_path = get_stylesheet_directory() . '/assets/css/components.css';
 	wp_enqueue_style(
 		'webradio-components',
 		get_stylesheet_directory_uri() . '/assets/css/components.css',
 		array( 'webradio-child-style' ),
-		WEBRADIO_CHILD_VERSION
+		file_exists( $components_path ) ? filemtime( $components_path ) : WEBRADIO_CHILD_VERSION
 	);
 }
 add_action( 'wp_enqueue_scripts', 'webradio_child_enqueue_styles' );
@@ -159,21 +167,15 @@ function webradio_child_agenda_missing_plugin_notice() {
 /**
  * Sécurité : masquer la version de WordPress.
  *
- * Retire le numéro de version du <head> et des URLs de fichiers CSS/JS
- * (?ver=7.1), pour ne pas faciliter la recherche de failles connues
- * correspondant à la version exacte du site.
+ * Retire le numéro de version du <head> pour ne pas faciliter la
+ * recherche de failles connues correspondant à la version exacte du
+ * site. Le retrait du paramètre ?ver= sur les fichiers CSS/JS a été
+ * supprimé : il cassait le cache-busting (les navigateurs ne
+ * détectaient plus les mises à jour de fichiers après déploiement),
+ * pour un bénéfice de sécurité quasi nul.
  */
 remove_action( 'wp_head', 'wp_generator' );
 add_filter( 'the_generator', '__return_empty_string' );
-
-function webradio_child_remove_version_query_arg( $src ) {
-	if ( strpos( $src, 'ver=' ) ) {
-		$src = remove_query_arg( 'ver', $src );
-	}
-	return $src;
-}
-add_filter( 'style_loader_src', 'webradio_child_remove_version_query_arg', 9999 );
-add_filter( 'script_loader_src', 'webradio_child_remove_version_query_arg', 9999 );
 
 /**
  * Sécurité : désactiver XML-RPC.
