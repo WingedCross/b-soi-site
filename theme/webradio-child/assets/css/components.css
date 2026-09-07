@@ -94,6 +94,12 @@
 	0%, 100%{ opacity: 1; }
 	50%{ opacity: .3; }
 }
+@media (prefers-reduced-motion: reduce){
+	.wr-radio-player__badge::before{
+		animation: none;
+		opacity: 1;
+	}
+}
 
 .wr-radio-player__info{ flex: 1 1 200px; min-width: 200px; text-align: left; }
 .wr-radio-player__title{ margin: 0; font-size: 1.1rem; line-height: 1; }
@@ -112,7 +118,7 @@
 }
 
 .wr-radio-player__fallback{
-	background: var(--wr-gris-moyen);
+	background: #5C5C5C;
 	color: var(--wr-blanc-casse);
 	padding: 14px 18px;
 	border-radius: 8px;
@@ -144,7 +150,7 @@
 	text-decoration: none;
 }
 .wr-agenda-list__title a:hover{ color: var(--wr-orange-feu); }
-.wr-agenda-empty{ color: var(--wr-gris-moyen); font-style: italic; }
+.wr-agenda-empty{ color: #5C5C5C; font-style: italic; }
 
 /* ==========================================================================
    Agenda / Événements (surcharge du plugin The Events Calendar — utile si
@@ -179,6 +185,6 @@
 a:focus-visible,
 button:focus-visible,
 input:focus-visible{
-	outline: 3px solid var(--wr-bleu-desature);
+	outline: 3px solid var(--wr-noir-charbon);
 	outline-offset: 2px;
 }

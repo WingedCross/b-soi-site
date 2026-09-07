@@ -1,3 +1,4 @@
+cat > theme/webradio-child/theme.json << 'EOF'
 {
 	"$schema": "https://schemas.wp.org/trunk/theme.json",
 	"version": 2,
@@ -68,9 +69,9 @@
 		},
 		"elements": {
 			"link": {
-				"color": { "text": "#6B8E23" },
+				"color": { "text": "#5A7219" },
 				":hover": {
-					"color": { "text": "#CC5500" }
+					"color": { "text": "#B34A00" }
 				}
 			},
 			"heading": {
@@ -81,7 +82,7 @@
 			},
 			"button": {
 				"color": {
-					"background": "#CC5500",
+					"background": "#B34A00",
 					"text": "#FAFAFA"
 				},
 				"border": { "radius": "8px" }
@@ -89,3 +90,4 @@
 		}
 	}
 }
+EOF
