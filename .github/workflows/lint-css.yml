@@ -1,7 +1,6 @@
 name: Lint CSS
 
 on:
-  on:
   pull_request:
 
 jobs:
