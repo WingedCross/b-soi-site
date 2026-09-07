@@ -80,6 +80,11 @@ add_filter( 'body_class', 'webradio_child_body_classes' );
  * chercher les prochains événements directement via WP_Query, et les
  * affiche avec notre propre balisage (facilement stylable avec la charte
  * graphique du site, sans dépendre du plugin payant).
+ *
+ * Chaque événement embarque aussi des données structurées JSON-LD
+ * (schema.org Event) — perdues par défaut puisqu'on court-circuite le
+ * rendu natif de The Events Calendar avec ce WP_Query maison. Utile
+ * pour les rich results Google (date, lieu, billetterie).
  */
 function webradio_child_agenda_shortcode( $atts ) {
 	$atts = shortcode_atts(
@@ -121,8 +126,44 @@ function webradio_child_agenda_shortcode( $atts ) {
 	while ( $query->have_posts() ) {
 		$query->the_post();
 		$start_date   = get_post_meta( get_the_ID(), '_EventStartDate', true );
+		$end_date     = get_post_meta( get_the_ID(), '_EventEndDate', true );
 		$start_ts     = $start_date ? DateTime::createFromFormat( 'Y-m-d H:i:s', $start_date, wp_timezone() ) : false;
+		$end_ts       = $end_date ? DateTime::createFromFormat( 'Y-m-d H:i:s', $end_date, wp_timezone() ) : false;
 		$date_display = $start_ts ? wp_date( 'j F Y — H:i', $start_ts->getTimestamp() ) : '';
+
+		// Récupération du lieu, s'il est renseigné sur l'événement.
+		$venue_id   = get_post_meta( get_the_ID(), '_EventVenueID', true );
+		$venue_data = null;
+		if ( $venue_id ) {
+			$venue_name = get_post_meta( $venue_id, '_VenueVenue', true );
+			if ( $venue_name ) {
+				$venue_data = array(
+					'@type'   => 'Place',
+					'name'    => $venue_name,
+					'address' => array_filter(
+						array(
+							'@type'           => 'PostalAddress',
+							'streetAddress'   => get_post_meta( $venue_id, '_VenueAddress', true ),
+							'addressLocality' => get_post_meta( $venue_id, '_VenueCity', true ),
+							'postalCode'      => get_post_meta( $venue_id, '_VenueZip', true ),
+							'addressCountry'  => get_post_meta( $venue_id, '_VenueCountry', true ),
+						)
+					),
+				);
+			}
+		}
+
+		$event_ld = array_filter(
+			array(
+				'@context'  => 'https://schema.org',
+				'@type'     => 'Event',
+				'name'      => get_the_title(),
+				'startDate' => $start_ts ? $start_ts->format( DateTime::ATOM ) : null,
+				'endDate'   => $end_ts ? $end_ts->format( DateTime::ATOM ) : null,
+				'url'       => get_permalink(),
+				'location'  => $venue_data,
+			)
+		);
 		?>
 		<div class="wr-agenda-list__item wr-card">
 			<?php if ( $date_display ) : ?>
@@ -131,6 +172,11 @@ function webradio_child_agenda_shortcode( $atts ) {
 			<h3 class="wr-agenda-list__title">
 				<a href="<?php echo esc_url( get_permalink() ); ?>"><?php echo esc_html( get_the_title() ); ?></a>
 			</h3>
+			<?php if ( $start_ts ) : ?>
+				<script type="application/ld+json">
+				<?php echo wp_json_encode( $event_ld ); ?>
+				</script>
+			<?php endif; ?>
 		</div>
 		<?php
 	}
