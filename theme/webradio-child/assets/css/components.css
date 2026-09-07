@@ -1,27 +1,11 @@
 /* ==========================================================================
-   Variables de la charte graphique
-   (dupliquées ici en CSS custom properties pour les composants qui ne
-   peuvent pas s'exprimer via theme.json seul : animation, mise en page
-   du lecteur radio, surcharge de plugin tiers)
-   ========================================================================== */
-:root{
-	--wr-noir-charbon: #36454F;
-	--wr-orange-feu: #CC5500;
-	--wr-bleu-desature: #A6DCED;
-	--wr-gris-moyen: #7F7F7F;
-	--wr-blanc-casse: #FAFAFA;
-	--wr-beige-chaud: #D9CBAA;
-	--wr-vert-mousse: #6B8E23;
-}
-
-/* ==========================================================================
    Sections génériques
    ========================================================================== */
 .wr-section{ padding: 56px 20px; }
-.wr-section--alt{ background: var(--wr-beige-chaud); }
+.wr-section--alt{ background: var(--wp--preset--color--wr-accent-4); }
 
 .wr-card{
-	background: var(--wr-blanc-casse);
+	background: var(--wp--preset--color--wr-base);
 	border: 1px solid #e7e2d6;
 	border-radius: 12px;
 	padding: 22px;
@@ -30,20 +14,18 @@
 
 .wr-tag{
 	display: inline-block;
-	background: var(--wr-bleu-desature);
-	color: var(--wr-noir-charbon);
+	background: var(--wp--preset--color--wr-accent-2);
+	color: var(--wp--preset--color--wr-contrast);
 	font-size: .75rem;
 	font-weight: 700;
 	padding: 3px 10px;
 	border-radius: 999px;
 }
 
-/* Bouton générique (accent orange feu) — vient en complément du bloc
-   Bouton natif de l'éditeur, pour les liens en texte brut (ex. templates). */
 .wr-btn{
 	display: inline-block;
-	background: var(--wr-orange-feu);
-	color: var(--wr-blanc-casse);
+	background: var(--wp--preset--color--wr-accent-1);
+	color: var(--wp--preset--color--wr-base);
 	text-decoration: none;
 	font-weight: 600;
 	padding: 10px 20px;
@@ -52,17 +34,17 @@
 	cursor: pointer;
 	transition: filter .2s ease;
 }
-.wr-btn:hover{ filter: brightness(1.08); color: var(--wr-blanc-casse); }
+.wr-btn:hover{ filter: brightness(1.08); color: var(--wp--preset--color--wr-base); }
 
 /* ==========================================================================
    Lecteur radio (diffuseur en direct)
    ========================================================================== */
 .wr-radio-player{
-	background: var(--wr-noir-charbon);
-	border: 1px solid var(--wr-gris-moyen);
+	background: var(--wp--preset--color--wr-contrast);
+	border: 1px solid var(--wp--preset--color--wr-accent-3);
 	border-radius: 14px;
 	padding: 22px;
-	color: var(--wr-blanc-casse);
+	color: var(--wp--preset--color--wr-base);
 	display: flex;
 	align-items: center;
 	gap: 18px;
@@ -74,8 +56,8 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
-	background: var(--wr-orange-feu);
-	color: var(--wr-blanc-casse);
+	background: var(--wp--preset--color--wr-accent-1);
+	color: var(--wp--preset--color--wr-base);
 	font-weight: 700;
 	font-size: .75rem;
 	text-transform: uppercase;
@@ -86,7 +68,7 @@
 .wr-radio-player__badge::before{
 	content: "";
 	width: 8px; height: 8px;
-	background: var(--wr-blanc-casse);
+	background: var(--wp--preset--color--wr-base);
 	border-radius: 50%;
 	animation: wr-pulse 1.4s infinite;
 }
@@ -103,7 +85,7 @@
 
 .wr-radio-player__info{ flex: 1 1 200px; min-width: 200px; text-align: left; }
 .wr-radio-player__title{ margin: 0; font-size: 1.1rem; line-height: 1; }
-.wr-radio-player__subtitle{ margin: 4px 0 0; color: var(--wr-bleu-desature); font-size: .9rem; }
+.wr-radio-player__subtitle{ margin: 4px 0 0; color: var(--wp--preset--color--wr-accent-2); font-size: .9rem; }
 .wr-radio-player__info p:empty{ display: none; margin: 0; }
 
 .wr-radio-player__frame-wrap{
@@ -119,12 +101,12 @@
 
 .wr-radio-player__fallback{
 	background: #5C5C5C;
-	color: var(--wr-blanc-casse);
+	color: var(--wp--preset--color--wr-base);
 	padding: 14px 18px;
 	border-radius: 8px;
 	font-size: .9rem;
 }
-.wr-radio-player__fallback a{ color: var(--wr-blanc-casse); font-weight: 700; }
+.wr-radio-player__fallback a{ color: var(--wp--preset--color--wr-base); font-weight: 700; }
 
 /* ==========================================================================
    Agenda / Événements — liste construite par notre shortcode [wr_agenda]
@@ -146,37 +128,36 @@
 }
 .wr-agenda-list__title{ margin: 0; font-size: 1.1rem; }
 .wr-agenda-list__title a{
-	color: var(--wr-noir-charbon);
+	color: var(--wp--preset--color--wr-contrast);
 	text-decoration: none;
 }
-.wr-agenda-list__title a:hover{ color: var(--wr-orange-feu); }
+.wr-agenda-list__title a:hover{ color: var(--wp--preset--color--wr-accent-1); }
 .wr-agenda-empty{ color: #5C5C5C; font-style: italic; }
 
 /* ==========================================================================
-   Agenda / Événements (surcharge du plugin The Events Calendar — utile si
-   la page /events/ du plugin est consultée directement)
+   Agenda / Événements (surcharge du plugin The Events Calendar)
    ========================================================================== */
 .wr-agenda-wrap :is(.tribe-events, .tribe-common){
-	--tec-color-accent-primary: var(--wr-orange-feu);
+	--tec-color-accent-primary: var(--wp--preset--color--wr-accent-1);
 	font-family: var(--wp--preset--font-family--body);
 }
-.wr-agenda-wrap a{ color: var(--wr-vert-mousse); }
+.wr-agenda-wrap a{ color: var(--wp--preset--color--wr-accent-5); }
 .wr-agenda-wrap .tribe-events-calendar-list__event-title a,
 .wr-agenda-wrap .tribe-common-h3,
 .wr-agenda-wrap .tribe-events-single-event-title{
-	color: var(--wr-noir-charbon) !important;
+	color: var(--wp--preset--color--wr-contrast) !important;
 	font-family: var(--wp--preset--font-family--heading);
 }
 .wr-agenda-wrap button,
 .wr-agenda-wrap .tribe-common-c-btn,
 .wr-agenda-wrap [type="submit"]{
-	background: var(--wr-orange-feu) !important;
-	border-color: var(--wr-orange-feu) !important;
-	color: var(--wr-blanc-casse) !important;
+	background: var(--wp--preset--color--wr-accent-1) !important;
+	border-color: var(--wp--preset--color--wr-accent-1) !important;
+	color: var(--wp--preset--color--wr-base) !important;
 }
 .wr-agenda-wrap .tribe-events-calendar-list__event-date-tag,
 .wr-agenda-wrap .tribe-events-calendar-month__day-cell--current{
-	background: var(--wr-bleu-desature) !important;
+	background: var(--wp--preset--color--wr-accent-2) !important;
 }
 
 /* ==========================================================================
@@ -185,6 +166,6 @@
 a:focus-visible,
 button:focus-visible,
 input:focus-visible{
-	outline: 3px solid var(--wr-noir-charbon);
+	outline: 3px solid var(--wp--preset--color--wr-contrast);
 	outline-offset: 2px;
 }
