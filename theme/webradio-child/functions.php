@@ -121,7 +121,8 @@ function webradio_child_agenda_shortcode( $atts ) {
 	while ( $query->have_posts() ) {
 		$query->the_post();
 		$start_date   = get_post_meta( get_the_ID(), '_EventStartDate', true );
-		$date_display = $start_date ? date_i18n( 'j F Y — H:i', strtotime( $start_date ) ) : '';
+		$start_ts     = $start_date ? DateTime::createFromFormat( 'Y-m-d H:i:s', $start_date, wp_timezone() ) : false;
+		$date_display = $start_ts ? wp_date( 'j F Y — H:i', $start_ts->getTimestamp() ) : '';
 		?>
 		<div class="wr-agenda-list__item wr-card">
 			<?php if ( $date_display ) : ?>
