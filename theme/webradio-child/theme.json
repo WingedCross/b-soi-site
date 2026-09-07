@@ -1,4 +1,3 @@
-cat > theme/webradio-child/theme.json << 'EOF'
 {
 	"$schema": "https://schemas.wp.org/trunk/theme.json",
 	"version": 2,
@@ -12,13 +11,13 @@ cat > theme/webradio-child/theme.json << 'EOF'
 	"settings": {
 		"color": {
 			"palette": [
-				{ "slug": "noir-charbon", "name": "Noir charbon", "color": "#36454F" },
-				{ "slug": "orange-feu", "name": "Orange feu", "color": "#CC5500" },
-				{ "slug": "bleu-desature", "name": "Bleu désaturé", "color": "#A6DCED" },
-				{ "slug": "gris-moyen", "name": "Gris moyen", "color": "#7F7F7F" },
-				{ "slug": "blanc-casse", "name": "Blanc cassé", "color": "#FAFAFA" },
-				{ "slug": "beige-chaud", "name": "Beige chaud", "color": "#D9CBAA" },
-				{ "slug": "vert-mousse", "name": "Vert mousse", "color": "#6B8E23" }
+				{ "slug": "wr-base", "name": "Blanc cassé", "color": "#FAFAFA" },
+				{ "slug": "wr-contrast", "name": "Noir charbon", "color": "#36454F" },
+				{ "slug": "wr-accent-1", "name": "Orange feu", "color": "#CC5500" },
+				{ "slug": "wr-accent-2", "name": "Bleu désaturé", "color": "#A6DCED" },
+				{ "slug": "wr-accent-3", "name": "Gris moyen", "color": "#7F7F7F" },
+				{ "slug": "wr-accent-4", "name": "Beige chaud", "color": "#D9CBAA" },
+				{ "slug": "wr-accent-5", "name": "Vert mousse", "color": "#6B8E23" }
 			],
 			"custom": true,
 			"customDuotone": true,
@@ -90,4 +89,3 @@ cat > theme/webradio-child/theme.json << 'EOF'
 		}
 	}
 }
-EOF
