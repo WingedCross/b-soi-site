@@ -1,9 +1,8 @@
 name: Lint CSS
 
 on:
+  on:
   pull_request:
-    paths:
-      - '**.css'
 
 jobs:
   css-lint:
