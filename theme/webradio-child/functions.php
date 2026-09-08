@@ -51,6 +51,17 @@ function webradio_child_enqueue_styles() {
 add_action( 'wp_enqueue_scripts', 'webradio_child_enqueue_styles' );
 
 /**
+ * Charge nos styles de composants dans l'éditeur de blocs / éditeur de
+ * site, en plus du front-end. Sans ça, l'aperçu dans l'éditeur ne
+ * correspond pas au rendu réel du site (lecteur radio, agenda, cartes
+ * non stylés pendant l'édition).
+ */
+function webradio_child_editor_styles() {
+	add_editor_style( 'assets/css/components.css' );
+}
+add_action( 'after_setup_theme', 'webradio_child_editor_styles' );
+
+/**
  * Réglages spécifiques au site (indépendants du fait que le thème soit
  * classique ou par blocs — ces fichiers ne changent pas).
  */
