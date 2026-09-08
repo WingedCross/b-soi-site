@@ -4,48 +4,42 @@
  *
  * Utilisation : [wr_radio_player]
  * (les réglages viennent du Customizer > Diffuseur radio, pré-remplis
- * avec le widget RadioKing existant de b-soï)
+ * avec le widget RadioKing existant de b-soï — valeurs par défaut
+ * centralisées dans inc/config.php)
  *
  * @package WebRadio_Child
  */
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
 function webradio_render_player_shortcode( $atts = array() ) {
+	$defaults = webradio_player_defaults();
+
 	$atts = shortcode_atts(
 		array(
-			'title'    => get_theme_mod( 'webradio_player_title', __( 'En direct maintenant', 'webradio-child' ) ),
+			'title'    => get_theme_mod( 'webradio_player_title', $defaults['title'] ),
 			'subtitle' => get_theme_mod( 'webradio_player_subtitle', '' ),
 		),
 		$atts,
 		'wr_radio_player'
 	);
 
-		// Les valeurs par défaut ci-dessous DOIVENT correspondre à celles
-	// déclarées dans inc/customizer.php : get_theme_mod() ne connaît pas
-	// automatiquement le "default" enregistré côté Customizer, il faut le
-	// repasser explicitement ici, sinon rien ne s'affiche tant que la
-	// section n'a jamais été ouverte/enregistrée dans l'admin.
-	$type         = get_theme_mod( 'webradio_player_type', 'iframe' );
-	$embed_url    = get_theme_mod( 'webradio_player_embed_url', 'https://player.radioking.io/b-soi/?c=%23CC5500&c2=%23FAFAFA&f=v&i=1&p=1&s=0&alb=1&li=1&popup=1&plc=0&h=365&l=275&v=2' );
-	$extra_script = get_theme_mod( 'webradio_player_extra_script', 'https://player.radioking.io/scripts/iframe.bundle.js' );
-	$stream_url   = get_theme_mod( 'webradio_player_stream_url', '' );
-	$width        = absint( get_theme_mod( 'webradio_player_width', 275 ) );
-	$height       = absint( get_theme_mod( 'webradio_player_height', 365 ) );
+	$type         = get_theme_mod( 'webradio_player_type', $defaults['type'] );
+	$embed_url    = get_theme_mod( 'webradio_player_embed_url', $defaults['embed_url'] );
+	$extra_script = get_theme_mod( 'webradio_player_extra_script', $defaults['extra_script'] );
+	$stream_url   = get_theme_mod( 'webradio_player_stream_url', $defaults['stream_url'] );
+	$width        = absint( get_theme_mod( 'webradio_player_width', $defaults['width'] ) );
+	$height       = absint( get_theme_mod( 'webradio_player_height', $defaults['height'] ) );
 	ob_start();
 	?>
 	<div class="wr-radio-player">
 		<div class="wr-radio-player__badge"><?php esc_html_e( 'Live', 'webradio-child' ); ?></div>
-
 		<div class="wr-radio-player__info">
 			<p class="wr-radio-player__title"><?php echo esc_html( $atts['title'] ); ?></p>
 			<?php if ( ! empty( $atts['subtitle'] ) ) : ?>
 				<p class="wr-radio-player__subtitle"><?php echo esc_html( $atts['subtitle'] ); ?></p>
 			<?php endif; ?>
 		</div>
-
 		<?php if ( 'iframe' === $type && $embed_url ) : ?>
 			<div class="wr-radio-player__frame-wrap">
 				<iframe
@@ -84,7 +78,6 @@ function webradio_render_player_shortcode( $atts = array() ) {
 	return ob_get_clean();
 }
 add_shortcode( 'wr_radio_player', 'webradio_render_player_shortcode' );
-
 /**
  * Le lecteur s'insère n'importe où via le shortcode [wr_radio_player] —
  * dans un bloc "Shortcode" de l'éditeur, ou directement dans un template
