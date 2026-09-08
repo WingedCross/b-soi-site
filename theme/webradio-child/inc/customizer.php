@@ -1,12 +1,16 @@
 <?php
 /**
- * Réglages du Customizer : diffuseur radio + réseaux sociaux.
+ * Réglages du Customizer : diffuseur radio.
  *
  * Les valeurs par défaut ci-dessous reprennent le widget RadioKing déjà
  * utilisé sur b-soi.fr (page "Diffuseur"), avec ses couleurs mises à jour
  * pour correspondre à la nouvelle charte (orange feu / blanc cassé au lieu
  * du bleu/blanc d'origine). Elles restent modifiables depuis l'admin sans
  * toucher au code.
+ *
+ * Les réseaux sociaux ne passent plus par le Customizer : ils sont gérés
+ * directement dans le pied de page via le bloc natif "Icônes des réseaux
+ * sociaux" de l'éditeur de site (Apparence → Modèles → Page d'accueil).
  *
  * @package WebRadio_Child
  */
@@ -171,41 +175,5 @@ function webradio_customize_register( $wp_customize ) {
 			'type'    => 'number',
 		)
 	);
-
-	// ------------------------------------------------------------------
-	// Section : Réseaux sociaux (affichés en pied de page)
-	// ------------------------------------------------------------------
-	$wp_customize->add_section(
-		'webradio_social_section',
-		array(
-			'title'    => __( 'Réseaux sociaux', 'webradio-child' ),
-			'priority' => 35,
-		)
-	);
-
-	$socials = array(
-		'facebook_url'  => __( 'URL Facebook', 'webradio-child' ),
-		'instagram_url' => __( 'URL Instagram', 'webradio-child' ),
-		'x_url'         => __( 'URL X / Twitter', 'webradio-child' ),
-		'mixcloud_url'  => __( 'URL Mixcloud (rediffusions)', 'webradio-child' ),
-	);
-
-	foreach ( $socials as $id => $label ) {
-		$wp_customize->add_setting(
-			$id,
-			array(
-				'default'           => '',
-				'sanitize_callback' => 'esc_url_raw',
-			)
-		);
-		$wp_customize->add_control(
-			$id,
-			array(
-				'label'   => $label,
-				'section' => 'webradio_social_section',
-				'type'    => 'url',
-			)
-		);
-	}
 }
 add_action( 'customize_register', 'webradio_customize_register' );
