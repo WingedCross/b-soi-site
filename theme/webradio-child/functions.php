@@ -111,32 +111,56 @@ function webradio_child_agenda_shortcode( $atts ) {
 		return webradio_child_agenda_missing_plugin_notice();
 	}
 
-	$query = new WP_Query(
-		array(
-			'post_type'      => 'tribe_events',
-			'posts_per_page' => (int) $atts['events_per_page'],
-			'meta_key'       => '_EventStartDate',
-			'orderby'        => 'meta_value',
-			'order'          => 'ASC',
-			'meta_query'     => array(
-				array(
-					'key'     => '_EventStartDate',
-					'value'   => current_time( 'Y-m-d H:i:s' ),
-					'compare' => '>=',
-					'type'    => 'DATETIME',
-				),
-			),
-		)
-	);
+	// Cache court (10 min) : évite de refaire la requête (jointure +
+	// tri sur meta) à chaque affichage de la page d'accueil. Pas
+	// d'invalidation immédiate à la sauvegarde d'un événement — un
+	// délai de propagation de 10 min max est un compromis acceptable
+	// vu le trafic et l'usage du site.
+	$cache_key = 'wr_agenda_' . (int) $atts['events_per_page'];
+	$events    = get_transient( $cache_key );
 
-	if ( ! $query->have_posts() ) {
+	if ( false === $events ) {
+		$query = new WP_Query(
+			array(
+				'post_type'      => 'tribe_events',
+				'posts_per_page' => (int) $atts['events_per_page'],
+				'no_found_rows'  => true,
+				'meta_key'       => '_EventStartDate',
+				'orderby'        => 'meta_value',
+				'order'          => 'ASC',
+				'meta_query'     => array(
+					array(
+						// Filtre sur la date de FIN (pas de début) : un
+						// événement multi-jours déjà commencé mais pas
+						// encore terminé reste visible dans l'agenda.
+						'key'     => '_EventEndDate',
+						'value'   => current_time( 'Y-m-d H:i:s' ),
+						'compare' => '>=',
+						'type'    => 'DATETIME',
+					),
+				),
+			)
+		);
+
+		$events = $query->posts;
+		set_transient( $cache_key, $events, 10 * MINUTE_IN_SECONDS );
+	}
+
+	if ( empty( $events ) ) {
 		return '<p class="wr-agenda-empty">' . esc_html__( 'Aucun événement à venir pour le moment.', 'webradio-child' ) . '</p>';
 	}
 
+	// "global $post" est indispensable ici : setup_postdata() seule ne
+	// suffit pas dans un foreach manuel. Sans cette ligne, les fonctions
+	// get_the_title()/get_permalink()/get_the_ID() continuent de lire
+	// l'ancien $post global (celui de la page courante) au lieu de
+	// l'événement en cours d'itération.
+	global $post;
+
 	ob_start();
 	echo '<div class="wr-agenda-list">';
-	while ( $query->have_posts() ) {
-		$query->the_post();
+	foreach ( $events as $post ) {
+		setup_postdata( $post );
 		$start_date   = get_post_meta( get_the_ID(), '_EventStartDate', true );
 		$end_date     = get_post_meta( get_the_ID(), '_EventEndDate', true );
 		$start_ts     = $start_date ? DateTime::createFromFormat( 'Y-m-d H:i:s', $start_date, wp_timezone() ) : false;
