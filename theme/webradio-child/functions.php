@@ -65,6 +65,7 @@ add_action( 'after_setup_theme', 'webradio_child_editor_styles' );
  * Réglages spécifiques au site (indépendants du fait que le thème soit
  * classique ou par blocs — ces fichiers ne changent pas).
  */
+require get_stylesheet_directory() . '/inc/config.php';
 require get_stylesheet_directory() . '/inc/customizer.php';
 require get_stylesheet_directory() . '/inc/radio-player.php';
 

@@ -2,11 +2,12 @@
 /**
  * Réglages du Customizer : diffuseur radio.
  *
- * Les valeurs par défaut ci-dessous reprennent le widget RadioKing déjà
- * utilisé sur b-soi.fr (page "Diffuseur"), avec ses couleurs mises à jour
- * pour correspondre à la nouvelle charte (orange feu / blanc cassé au lieu
- * du bleu/blanc d'origine). Elles restent modifiables depuis l'admin sans
- * toucher au code.
+ * Les valeurs par défaut proviennent de inc/config.php (source unique),
+ * reprenant le widget RadioKing déjà utilisé sur b-soi.fr (page
+ * "Diffuseur"), avec ses couleurs mises à jour pour correspondre à la
+ * nouvelle charte (orange feu / blanc cassé au lieu du bleu/blanc
+ * d'origine). Elles restent modifiables depuis l'admin sans toucher au
+ * code.
  *
  * Les réseaux sociaux ne passent plus par le Customizer : ils sont gérés
  * directement dans le pied de page via le bloc natif "Icônes des réseaux
@@ -20,6 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 function webradio_customize_register( $wp_customize ) {
+
+	$defaults = webradio_player_defaults();
 
 	// ------------------------------------------------------------------
 	// Section : Diffuseur radio
@@ -37,7 +40,7 @@ function webradio_customize_register( $wp_customize ) {
 	$wp_customize->add_setting(
 		'webradio_player_type',
 		array(
-			'default'           => 'iframe',
+			'default'           => $defaults['type'],
 			'sanitize_callback' => 'sanitize_text_field',
 		)
 	);
@@ -58,7 +61,7 @@ function webradio_customize_register( $wp_customize ) {
 	$wp_customize->add_setting(
 		'webradio_player_embed_url',
 		array(
-			'default'           => 'https://player.radioking.io/b-soi/?c=%23CC5500&c2=%23FAFAFA&f=v&i=1&p=1&s=0&alb=1&li=1&popup=1&plc=0&h=365&l=275&v=2',
+			'default'           => $defaults['embed_url'],
 			'sanitize_callback' => 'esc_url_raw',
 		)
 	);
@@ -76,7 +79,7 @@ function webradio_customize_register( $wp_customize ) {
 	$wp_customize->add_setting(
 		'webradio_player_extra_script',
 		array(
-			'default'           => 'https://player.radioking.io/scripts/iframe.bundle.js',
+			'default'           => $defaults['extra_script'],
 			'sanitize_callback' => 'esc_url_raw',
 		)
 	);
@@ -94,7 +97,7 @@ function webradio_customize_register( $wp_customize ) {
 	$wp_customize->add_setting(
 		'webradio_player_stream_url',
 		array(
-			'default'           => '',
+			'default'           => $defaults['stream_url'],
 			'sanitize_callback' => 'esc_url_raw',
 		)
 	);
@@ -112,7 +115,7 @@ function webradio_customize_register( $wp_customize ) {
 	$wp_customize->add_setting(
 		'webradio_player_title',
 		array(
-			'default'           => __( 'En direct maintenant', 'webradio-child' ),
+			'default'           => $defaults['title'],
 			'sanitize_callback' => 'sanitize_text_field',
 		)
 	);
@@ -129,7 +132,7 @@ function webradio_customize_register( $wp_customize ) {
 	$wp_customize->add_setting(
 		'webradio_player_subtitle',
 		array(
-			'default'           => __( 'Écoutez B-Soï en direct, 24h/24.', 'webradio-child' ),
+			'default'           => $defaults['subtitle'],
 			'sanitize_callback' => 'sanitize_text_field',
 		)
 	);
@@ -146,7 +149,7 @@ function webradio_customize_register( $wp_customize ) {
 	$wp_customize->add_setting(
 		'webradio_player_width',
 		array(
-			'default'           => 275,
+			'default'           => $defaults['width'],
 			'sanitize_callback' => 'absint',
 		)
 	);
@@ -163,7 +166,7 @@ function webradio_customize_register( $wp_customize ) {
 	$wp_customize->add_setting(
 		'webradio_player_height',
 		array(
-			'default'           => 365,
+			'default'           => $defaults['height'],
 			'sanitize_callback' => 'absint',
 		)
 	);
