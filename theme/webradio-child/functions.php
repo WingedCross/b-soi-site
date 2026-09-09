@@ -59,9 +59,9 @@ add_action( 'after_setup_theme', 'webradio_child_editor_styles' );
  * Réglages spécifiques au site (indépendants du fait que le thème soit
  * classique ou par blocs — ces fichiers ne changent pas).
  */
-require get_stylesheet_directory() . '/inc/config.php';
-require get_stylesheet_directory() . '/inc/customizer.php';
-require get_stylesheet_directory() . '/inc/radio-player.php';
+require_once get_stylesheet_directory() . '/inc/config.php';
+require_once get_stylesheet_directory() . '/inc/customizer.php';
+require_once get_stylesheet_directory() . '/inc/radio-player.php';
 
 /**
  * Ajoute une classe de contexte "agenda" sur le body quand le plugin
@@ -336,15 +336,24 @@ add_filter(
 /**
  * Sécurité : uniformiser les messages d'erreur de connexion.
  *
- * Par défaut, WordPress indique si c'est le nom d'utilisateur qui est
- * inconnu OU le mot de passe qui est incorrect — ce qui confirme à un
- * attaquant qu'un identifiant existe, facilitant les attaques ciblées.
- * On remplace par un message neutre, identique dans tous les cas.
+ * Uniformise uniquement les erreurs liées à un identifiant/mot de
+ * passe incorrect — pas les autres (cookies désactivés, compte
+ * désactivé, session expirée...), qui restent utiles à l'utilisateur
+ * légitime pour comprendre son vrai problème. On évite ainsi de
+ * confirmer à un attaquant qu'un identifiant existe, sans pour autant
+ * induire un utilisateur légitime en erreur sur un souci technique.
  */
 add_filter(
 	'login_errors',
-	function () {
-		return __( 'Identifiants incorrects.', 'webradio-child' );
+	function ( $error ) {
+		global $errors;
+		$codes_a_uniformiser = array( 'invalid_username', 'incorrect_password', 'invalidcombo', 'empty_password', 'empty_username' );
+
+		if ( is_wp_error( $errors ) && array_intersect( $codes_a_uniformiser, $errors->get_error_codes() ) ) {
+			return __( 'Identifiants incorrects.', 'webradio-child' );
+		}
+
+		return $error;
 	}
 );
 
