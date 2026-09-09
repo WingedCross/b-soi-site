@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<ruleset name="B-Soi WebRadio">
+	<description>Vérifie le thème enfant selon WordPress-Core (sécurité et bonnes pratiques essentielles).</description>
+	<file>theme/webradio-child</file>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<arg value="sp"/>
+	<arg name="colors"/>
+	<rule ref="WordPress-Core"/>
+</ruleset>
