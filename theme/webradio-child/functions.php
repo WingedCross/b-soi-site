@@ -13,11 +13,13 @@ define( 'WEBRADIO_CHILD_VERSION', '1.0.0' );
 
 /**
  * Charge les styles : celui du thème parent (Twenty Twenty-Five), puis
- * le style.css du thème enfant (en-tête uniquement), puis nos styles de
- * composants propres au site (lecteur radio, agenda, boutons).
+ * nos styles de composants propres au site (lecteur radio, agenda,
+ * boutons). Le style.css du thème enfant n'est plus chargé : il ne
+ * contient que l'en-tête du thème, aucun style réel — une requête
+ * HTTP gratuite en moins par page.
  *
- * La version de chaque fichier enfant est calculée à partir de sa date
- * de dernière modification (filemtime), pas d'une constante figée — ça
+ * La version de components.css est calculée à partir de sa date de
+ * dernière modification (filemtime), pas d'une constante figée — ça
  * garantit que l'URL change automatiquement à chaque déploiement, pour
  * que les navigateurs et le cache serveur ne servent jamais une
  * ancienne version après une mise à jour.
@@ -26,25 +28,17 @@ function webradio_child_enqueue_styles() {
 	$parent_theme = wp_get_theme( get_template() );
 
 	wp_enqueue_style(
-		'twentytwentyfive-style',
+		'twentytwentyfive-parent-style',
 		get_template_directory_uri() . '/style.css',
 		array(),
 		$parent_theme->get( 'Version' )
-	);
-
-	$child_style_path = get_stylesheet_directory() . '/style.css';
-	wp_enqueue_style(
-		'webradio-child-style',
-		get_stylesheet_uri(),
-		array( 'twentytwentyfive-style' ),
-		file_exists( $child_style_path ) ? filemtime( $child_style_path ) : WEBRADIO_CHILD_VERSION
 	);
 
 	$components_path = get_stylesheet_directory() . '/assets/css/components.css';
 	wp_enqueue_style(
 		'webradio-components',
 		get_stylesheet_directory_uri() . '/assets/css/components.css',
-		array( 'webradio-child-style' ),
+		array( 'twentytwentyfive-parent-style' ),
 		file_exists( $components_path ) ? filemtime( $components_path ) : WEBRADIO_CHILD_VERSION
 	);
 }

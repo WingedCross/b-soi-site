@@ -112,7 +112,6 @@
    Agenda / Événements — liste construite par notre shortcode [wr_agenda]
    ========================================================================== */
 .wr-agenda-list{
-	list-style: none !important;
 	margin: 0;
 	padding: 0;
 	display: flex;
@@ -120,7 +119,6 @@
 	gap: 14px;
 }
 .wr-agenda-list__item{
-	list-style: none !important;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
