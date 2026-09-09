@@ -16,7 +16,7 @@ jobs:
           node-version: '20'
 
       - name: Installer stylelint
-        run: npm install --no-save stylelint
+        run: npm install --no-save stylelint stylelint-config-standard
 
       - name: Vérifier les fichiers CSS
         run: npx stylelint "theme/webradio-child/assets/css/**/*.css"
