@@ -1,0 +1,23 @@
+name: WPCS
+
+on:
+  pull_request:
+
+jobs:
+  phpcs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v7
+
+      - name: Installer PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer
+
+      - name: Installer PHPCS et les normes WordPress
+        run: composer install --no-interaction --no-progress
+
+      - name: Vérifier le code (WordPress-Core)
+        run: vendor/bin/phpcs
