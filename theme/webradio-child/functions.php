@@ -285,7 +285,8 @@ add_filter(
 add_action(
 	'init',
 	function () {
-		if ( false !== strpos( $_SERVER['REQUEST_URI'], 'xmlrpc.php' ) ) {
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		if ( false !== strpos( $request_uri, 'xmlrpc.php' ) ) {
 			status_header( 403 );
 			header( 'Content-Type: text/plain; charset=utf-8' );
 			echo 'XML-RPC services are disabled on this site.';
@@ -301,12 +302,18 @@ add_action(
  * sur des URLs du type b-soi.fr/?author=1, /?author=2, etc. Hook sur
  * "init" plutôt que "template_redirect" pour s'exécuter avant que
  * WordPress ne redirige lui-même vers l'URL propre de l'auteur.
+ *
+ * Ne bloque que les valeurs numériques (la vraie énumération), pas
+ * n'importe quelle valeur non vide — ?author=slug reste normal. Une
+ * redirection discrète vers l'accueil remplace le wp_die() 403, qui
+ * affichait une page d'erreur WordPress reconnaissable.
  */
 add_action(
 	'init',
 	function () {
-		if ( ! is_admin() && ! empty( $_GET['author'] ) ) {
-			wp_die( 'Accès non autorisé.', 'Erreur', array( 'response' => 403 ) );
+		if ( ! is_admin() && isset( $_GET['author'] ) && is_numeric( wp_unslash( $_GET['author'] ) ) ) {
+			wp_safe_redirect( home_url( '/' ) );
+			exit;
 		}
 	}
 );
