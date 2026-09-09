@@ -2,6 +2,7 @@
 <ruleset name="B-Soi WebRadio">
 	<description>Vérifie le thème enfant selon WordPress-Core (sécurité et bonnes pratiques essentielles).</description>
 	<file>theme/webradio-child</file>
+	<arg name="extensions" value="php"/>
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<arg value="sp"/>
