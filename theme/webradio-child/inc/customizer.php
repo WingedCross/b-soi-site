@@ -36,12 +36,15 @@ function webradio_customize_register( $wp_customize ) {
 		)
 	);
 
-	// Type d'intégration.
+	// Type d'intégration. Sanitize custom : seules "iframe" ou "audio"
+	// sont des valeurs valides (repli sur "iframe" sinon).
 	$wp_customize->add_setting(
 		'webradio_player_type',
 		array(
 			'default'           => $defaults['type'],
-			'sanitize_callback' => 'sanitize_text_field',
+			'sanitize_callback' => function ( $value ) {
+				return in_array( $value, array( 'iframe', 'audio' ), true ) ? $value : 'iframe';
+			},
 		)
 	);
 	$wp_customize->add_control(
@@ -145,12 +148,15 @@ function webradio_customize_register( $wp_customize ) {
 		)
 	);
 
-	// Largeur du widget iframe.
+	// Largeur du widget iframe. Bornée à 2000px max pour éviter une
+	// valeur absurde qui casserait la mise en page.
 	$wp_customize->add_setting(
 		'webradio_player_width',
 		array(
 			'default'           => $defaults['width'],
-			'sanitize_callback' => 'absint',
+			'sanitize_callback' => function ( $value ) {
+				return min( absint( $value ), 2000 );
+			},
 		)
 	);
 	$wp_customize->add_control(
@@ -162,12 +168,14 @@ function webradio_customize_register( $wp_customize ) {
 		)
 	);
 
-	// Hauteur du widget iframe.
+	// Hauteur du widget iframe. Bornée à 2000px max, même raison.
 	$wp_customize->add_setting(
 		'webradio_player_height',
 		array(
 			'default'           => $defaults['height'],
-			'sanitize_callback' => 'absint',
+			'sanitize_callback' => function ( $value ) {
+				return min( absint( $value ), 2000 );
+			},
 		)
 	);
 	$wp_customize->add_control(
