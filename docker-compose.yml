@@ -27,7 +27,8 @@ services:
       - wordpress_data:/var/www/html
       - ./theme/webradio-child:/var/www/html/wp-content/themes/webradio-child
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     restart: unless-stopped
   db:
     image: mysql:8.4
@@ -38,15 +39,21 @@ services:
       MYSQL_ROOT_PASSWORD: root_local_dev
     volumes:
       - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_local_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     restart: unless-stopped
   phpmyadmin:
-    image: phpmyadmin
+    image: phpmyadmin:5.2
     ports:
       - "8081:80"
     environment:
       PMA_HOST: db
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     restart: unless-stopped
 volumes:
   wordpress_data:
